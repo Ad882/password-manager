@@ -31,3 +31,8 @@ class Database:
         query = "DELETE FROM passwords WHERE site = ?"
         self.conn.execute(query, (site,))
         self.conn.commit()
+
+    def list_all_passwords(self):
+        query = "SELECT site, username, password FROM passwords"
+        cursor = self.conn.execute(query)
+        return cursor.fetchall()
