@@ -7,7 +7,6 @@ import os
 def main():
     db = Database("database/passwords.db")
     security = Security()
-    security = Security()
 
     print(f"{Fore.BLUE}Bienvenue dans le gestionnaire de mots de passe sécurisé.{Style.RESET_ALL}")
 
@@ -29,7 +28,8 @@ def main():
             print("2. Ajouter un mot de passe")
             print("3. Récupérer un mot de passe")
             print("4. Supprimer un mot de passe")
-            print("5. Quitter")
+            print("5. Lister tous les mots de passe") 
+            print("6. Quitter")
             choice = input(f"{Fore.BLUE}Choisissez une option: {Style.RESET_ALL}")
 
             if choice == "1":
@@ -64,6 +64,16 @@ def main():
                 print(f"{Fore.RED}Mot de passe supprimé!{Style.RESET_ALL}")
 
             elif choice == "5":
+                passwords = db.list_all_passwords()
+                if passwords:
+                    print(f"\n{Fore.YELLOW}Liste de tous les mots de passe:{Style.RESET_ALL}")
+                    for site, username, enc_password in passwords:
+                        password = security.decrypt(enc_password, master_password)
+                        print(f"Site: {site} -- Nom d'utilisateur: {username} -- Mot de passe: {password}")
+                else:
+                    print(f"{Fore.RED}Aucun mot de passe enregistré.{Style.RESET_ALL}")
+
+            elif choice == "6":
                 print(f"{Fore.MAGENTA}Au revoir!{Style.RESET_ALL}")
                 break
 
