@@ -31,7 +31,7 @@ password_manager/
 
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/
+   git clone https://github.com/Ad882/password-manager
    cd ./password-manager
    ```
 
