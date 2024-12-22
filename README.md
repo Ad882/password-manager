@@ -15,15 +15,21 @@ This is a basic **password manager** application built with Python and SQLite. I
 ### 🗂️ **Project Structure**  
 ```plaintext
 password_manager/
-├── database/               # Contains the SQLite database and related scripts
+├── database/               # Contains the SQLite database and related 
 │   ├── db_handler.py       # Handles database operations
-│   └── passwords.db # Local SQLite database file
+│   └── passwords.db        # Local SQLite database file
+│
+├── tests/                  # Contains the unit tests 
+│   ├── test_database.py    # Tests the database related functions
+│   ├── test_security.py    # Tests the security related functions
+│   └── test_utils.py       # Tests the auxiliary functions
+│
 ├── main.py                 # Entry point for the application
 ├── master_password.txt     # Contains the hashed master password
 ├── README.md
 ├── requirements.txt        # Dependencies for the project
 ├── security.py             # Contains security-related scripts
-└── utils.py        # utility functions / generic tools
+└── utils.py                # utility functions / generic tools
 ```
 
 ---
