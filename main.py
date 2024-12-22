@@ -50,18 +50,25 @@ def main():
 
             elif choice == "3":
                 site = input("Entrez le site ou l'application: ")
-                result = db.get_password(site)
-                if result:
-                    username, enc_password = result
-                    password = security.decrypt(enc_password, master_password)
-                    print(f"Nom d'utilisateur: {username}, Mot de passe: {password}")
+                results = db.get_password(site)
+
+                if results:
+                    print(f"{Fore.GREEN}Comptes trouvés pour le site '{site}':{Style.RESET_ALL}")
+                    for index, (username, enc_password) in enumerate(results, start=1):
+                        try:
+                            password = security.decrypt(enc_password, master_password)
+                            print(f"{Fore.YELLOW}Compte {index}:{Style.RESET_ALL} Nom d'utilisateur: {username}, Mot de passe: {password}")
+                        except Exception as e:
+                            print(f"{Fore.RED}Erreur lors du déchiffrement: {e}{Style.RESET_ALL}")
                 else:
-                    print(f"{Fore.RED}Aucun mot de passe trouvé pour ce site.{Style.RESET_ALL}")
+                    print(f"{Fore.RED}Aucun compte trouvé pour le site '{site}'.{Style.RESET_ALL}")
+
 
             elif choice == "4":
                 site = input("Entrez le site ou l'application: ")
                 db.delete_password(site)
                 print(f"{Fore.RED}Mot de passe supprimé!{Style.RESET_ALL}")
+
 
             elif choice == "5":
                 passwords = db.list_all_passwords()
@@ -72,6 +79,7 @@ def main():
                         print(f"Site: {site} -- Nom d'utilisateur: {username} -- Mot de passe: {password}")
                 else:
                     print(f"{Fore.RED}Aucun mot de passe enregistré.{Style.RESET_ALL}")
+
 
             elif choice == "6":
                 print(f"{Fore.MAGENTA}Au revoir!{Style.RESET_ALL}")
