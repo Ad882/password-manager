@@ -19,7 +19,7 @@ password_manager/
 │   ├── db_handler.py       # Handles database operations
 │   └── passwords.db # Local SQLite database file
 ├── main.py                 # Entry point for the application
-├── master_password.txt     # Contains the master password
+├── master_password.txt     # Contains the hashed master password
 ├── README.md
 ├── requirements.txt        # Dependencies for the project
 ├── security.py             # Contains security-related scripts
@@ -70,6 +70,8 @@ password_manager/
 
 - `Python 3.8+` 🐍  
 - `SQLite` 🗄️  
+- `bcrypt` 🔒  
+
 
 ---
 
