@@ -1,6 +1,6 @@
 from database.database import Database
 from security import Security
-from utils import generate_password
+from utils import generate_password, clear_terminal
 from colorama import Fore, Style
 import os
 
@@ -18,7 +18,7 @@ def main():
         master_password = input("Entrez votre maître-mot de passe: ")
 
         if not security.verify_master_password(master_password):
-            print("Mot de passe incorrect. Au revoir.")
+            print(f"{Fore.RED}Mot de passe incorrect. Fermeture du gestionnaire.{Style.RESET_ALL}")
             return
 
         print(f"{Fore.GREEN}Mot de passe maître correct!{Style.RESET_ALL}")
@@ -82,7 +82,8 @@ def main():
 
 
             elif choice == "6":
-                print(f"{Fore.MAGENTA}Au revoir!{Style.RESET_ALL}")
+                clear_terminal()
+                print(f"{Fore.RED}Gestionnaire fermé.{Style.RESET_ALL}")
                 break
 
             else:
