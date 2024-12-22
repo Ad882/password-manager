@@ -1,5 +1,6 @@
 import sqlite3
 
+
 class Database:
     def __init__(self, db_name):
         self.conn = sqlite3.connect(db_name)
@@ -25,7 +26,10 @@ class Database:
     def get_password(self, site):
         query = "SELECT username, password FROM passwords WHERE site = ?"
         cursor = self.conn.execute(query, (site,))
-        return cursor.fetchall()
+        result = cursor.fetchall()
+        if result:
+            return result
+        return None
 
     def delete_password(self, site):
         query = "DELETE FROM passwords WHERE site = ?"
