@@ -71,9 +71,19 @@ password_manager/
 - `Python 3.8+` 🐍  
 - `SQLite` 🗄️  
 - `bcrypt` 🔒  
-
+- `unittest` 🧪
 
 ---
 
 ### 🌐 **Language**  
 This application operates **entirely in French**!
+
+
+---
+
+### 🧪 **Running Tests**
+
+To ensure the integrity and functionality of the password manager, unit tests have been included for key components like encryption, database operations, and utility functions. To run the tests, use the following command to run all the unit tests in the `tests/` folder:
+  ```bash
+  python -m unittest discover tests
+  ```
