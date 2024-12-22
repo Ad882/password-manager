@@ -25,7 +25,7 @@ class Database:
     def get_password(self, site):
         query = "SELECT username, password FROM passwords WHERE site = ?"
         cursor = self.conn.execute(query, (site,))
-        return cursor.fetchone()
+        return cursor.fetchall()
 
     def delete_password(self, site):
         query = "DELETE FROM passwords WHERE site = ?"
