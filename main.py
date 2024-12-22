@@ -3,6 +3,7 @@ from security import Security
 from utils import generate_password, clear_terminal
 from colorama import Fore, Style
 import os
+import getpass
 
 def main():
     db = Database("database/passwords.db")
@@ -12,10 +13,10 @@ def main():
 
     if not os.path.exists(security.master_password_file):
         print("Initialisation du mot de passe maître...")
-        master_password = input("Entrez un nouveau mot de passe maître: ")
+        master_password = getpass.getpass("Entrez un nouveau mot de passe maître: ")
         security.initialize_master_password(master_password)
     else:
-        master_password = input("Entrez votre maître-mot de passe: ")
+        master_password = getpass.getpass("Entrez le mot de passe maître: ")
 
         if not security.verify_master_password(master_password):
             print(f"{Fore.RED}Mot de passe incorrect. Fermeture du gestionnaire.{Style.RESET_ALL}")
