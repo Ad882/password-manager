@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
+import bcrypt
 
 class Security:
     def __init__(self, master_password_file="master_password.txt"):
@@ -11,8 +12,9 @@ class Security:
 
     def initialize_master_password(self, master_password: str) -> None:
         try:
-            with open(self.master_password_file, "w") as file:
-                file.write(master_password + "\n")
+            hashed_password = bcrypt.hashpw(master_password.encode(), bcrypt.gensalt())
+            with open(self.master_password_file, "wb") as file:
+                file.write(hashed_password)
             print("Master password initialized successfully.")
             self.create_cipher(master_password)
         except Exception as e:
@@ -45,9 +47,12 @@ class Security:
 
     def verify_master_password(self, master_password: str) -> bool:
         try:
-            with open(self.master_password_file, "r") as file:
-                stored_password = file.readline().strip()
-            return master_password == stored_password
+            with open(self.master_password_file, "rb") as file:
+                stored_hashed_password = file.read()
+            return bcrypt.checkpw(master_password.encode(), stored_hashed_password)
         except FileNotFoundError:
             print("Error: Master password file not found.")
+            return False
+        except Exception as e:
+            print(f"Error verifying master password: {e}")
             return False
