@@ -5,9 +5,10 @@ from colorama import Fore, Style
 import os
 import getpass
 
+
 def main():
     db = Database("database/passwords.db")
-    security = Security()
+    security = Security(db=db)
 
     print(f"{Fore.BLUE}Bienvenue dans le gestionnaire de mots de passe sécurisé.{Style.RESET_ALL}")
 
@@ -15,12 +16,22 @@ def main():
         print("Initialisation du mot de passe maître...")
         master_password = getpass.getpass("Entrez un nouveau mot de passe maître: ")
         security.initialize_master_password(master_password)
-    else:
-        master_password = getpass.getpass("Entrez le mot de passe maître: ")
 
-        if not security.verify_master_password(master_password):
-            print(f"{Fore.RED}Mot de passe incorrect. Fermeture du gestionnaire.{Style.RESET_ALL}")
-            return
+    else:
+        if not security.check_consistency():
+            print(f"{Fore.RED}/!\Incohérence détectée entre le mot de passe maître et la base de données.{Style.RESET_ALL}")
+            print(f"{Fore.RED}Toutes les données seront supprimées pour des raisons de sécurité.{Style.RESET_ALL}")
+            os.remove("database/passwords.db")
+            db = Database("database/passwords.db")
+            security = Security(db=db)
+            master_password = getpass.getpass("Entrez un nouveau mot de passe maître: ")
+            security.initialize_master_password(master_password)
+        else:
+            master_password = getpass.getpass("Entrez le mot de passe maître: ")
+
+            if not security.verify_master_password(master_password):
+                print(f"{Fore.RED}Mot de passe incorrect. Fermeture du gestionnaire.{Style.RESET_ALL}")
+                return
 
         print(f"{Fore.GREEN}Mot de passe maître correct!{Style.RESET_ALL}")
 

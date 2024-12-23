@@ -6,15 +6,19 @@ import base64
 import bcrypt
 
 class Security:
-    def __init__(self, master_password_file="master_password.txt"):
+    def __init__(self, master_password_file="master_password.txt", db=None):
         self.master_password_file = master_password_file
-        self.cipher = None
-
+        self.db = db
+        
     def initialize_master_password(self, master_password: str) -> None:
         try:
             hashed_password = bcrypt.hashpw(master_password.encode(), bcrypt.gensalt())
+            if self.db:
+                self.db.store_master_password(hashed_password)
+
             with open(self.master_password_file, "wb") as file:
                 file.write(hashed_password)
+
             print("Master password initialized successfully.")
             self.create_cipher(master_password)
         except Exception as e:
@@ -56,3 +60,13 @@ class Security:
         except Exception as e:
             print(f"Error verifying master password: {e}")
             return False
+
+    def check_consistency(self) -> bool:
+        with open(self.master_password_file, "r") as file:
+            file_password_hash = file.readline().strip()
+        
+        if self.db:
+            db_password_hash = self.db.get_stored_master_password()
+        else: 
+            None
+        return file_password_hash == db_password_hash.decode()
