@@ -15,6 +15,9 @@ def main():
     if not os.path.exists(security.master_password_file):
         print("Initialisation du mot de passe maître...")
         master_password = getpass.getpass("Entrez un nouveau mot de passe maître: ")
+        os.remove("database/passwords.db")
+        db = Database("database/passwords.db")
+        security = Security(db=db)
         security.initialize_master_password(master_password)
 
     else:

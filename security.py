@@ -20,7 +20,6 @@ class Security:
                 file.write(hashed_password)
 
             print("Master password initialized successfully.")
-            self.create_cipher(master_password)
         except Exception as e:
             print(f"Error initializing master password: {e}")
 
