@@ -13,7 +13,8 @@ class Database:
             id INTEGER PRIMARY KEY,
             site TEXT NOT NULL,
             username TEXT NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            salt TEXT NOT NULL
         )
         """
         self.conn.execute(query)
@@ -30,18 +31,22 @@ class Database:
         self.conn.execute(query)
         self.conn.commit()
 
-    def add_password(self, site, username, password):
-        query = "INSERT INTO passwords (site, username, password) VALUES (?, ?, ?)"
-        self.conn.execute(query, (site, username, password))
+    def add_password(self, site, username, password, salt):
+        query = """INSERT INTO passwords (site, username, password, salt) VALUES (?, ?, ?, ?)"""
+        self.conn.execute(query, (site, username, password, salt))
         self.conn.commit()
 
     def get_password(self, site):
-        query = "SELECT username, password FROM passwords WHERE site = ?"
+        query = """SELECT username, password, salt FROM passwords WHERE site = ?"""
         cursor = self.conn.execute(query, (site,))
-        result = cursor.fetchall()
-        if result:
-            return result
+        results = cursor.fetchall()
+        if results:
+            return [
+                {"username": username, "password": password, "salt": salt}
+                for username, password, salt in results
+            ]
         return None
+    
 
     def delete_password(self, site):
         query = "DELETE FROM passwords WHERE site = ?"
@@ -49,21 +54,17 @@ class Database:
         self.conn.commit()
 
     def list_all_passwords(self):
-        query = "SELECT site, username, password FROM passwords"
+        query = """SELECT site, username, password, salt FROM passwords"""
         cursor = self.conn.execute(query)
         return cursor.fetchall()
 
     def store_master_password(self, hashed_password):
-        query = """
-        INSERT INTO settings (key, value) VALUES ('master_password', ?)
-        """
+        query = """INSERT INTO settings (key, value) VALUES ('master_password', ?)"""
         self.conn.execute(query, (hashed_password, ))
         self.conn.commit()
 
     def get_stored_master_password(self):
-        query = """
-        SELECT value FROM settings WHERE key = 'master_password'
-        """
+        query = """SELECT value FROM settings WHERE key = 'master_password'"""
         cursor = self.conn.execute(query)
         result = cursor.fetchone()
         if result:
