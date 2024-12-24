@@ -61,7 +61,7 @@ def main():
             elif choice == "2":
                 site = input("Entrez le site ou l'application: ")
                 username = input("Entrez le nom d'utilisateur: ")
-                password = input("Entrez le mot de passe: ")
+                password = getpass.getpass("Entrez le mot de passe: ")
                 enc_data = security.encrypt(password, master_password)
                 salt_base64, encrypted_password = enc_data.split(":", 1)
                 salt = base64.urlsafe_b64decode(salt_base64)
