@@ -4,7 +4,7 @@ from utils import generate_password, clear_terminal
 from colorama import Fore, Style
 import os
 import getpass
-
+import base64
 
 def main():
     db = Database("database/passwords.db")
@@ -51,7 +51,10 @@ def main():
                 site = input("Entrez le site ou l'application: ")
                 username = input("Entrez le nom d'utilisateur: ")
                 password = generate_password()
-                db.add_password(site, username, security.encrypt(password, master_password))
+                enc_data = security.encrypt(password, master_password)
+                salt_base64, encrypted_password = enc_data.split(":", 1)
+                salt = base64.urlsafe_b64decode(salt_base64)
+                db.add_password(site, username, encrypted_password, salt)
                 print(f"{Fore.GREEN}Mot de passe généré et enregistré: {password}{Style.RESET_ALL}")
 
 
@@ -59,7 +62,10 @@ def main():
                 site = input("Entrez le site ou l'application: ")
                 username = input("Entrez le nom d'utilisateur: ")
                 password = input("Entrez le mot de passe: ")
-                db.add_password(site, username, security.encrypt(password, master_password))
+                enc_data = security.encrypt(password, master_password)
+                salt_base64, encrypted_password = enc_data.split(":", 1)
+                salt = base64.urlsafe_b64decode(salt_base64)
+                db.add_password(site, username, encrypted_password, salt)
                 print(f"{Fore.GREEN}Mot de passe enregistré!{Style.RESET_ALL}")
 
 
@@ -69,9 +75,14 @@ def main():
 
                 if results:
                     print(f"{Fore.GREEN}Comptes trouvés pour le site '{site}':{Style.RESET_ALL}")
-                    for index, (username, enc_password) in enumerate(results, start=1):
+                    for index, record in enumerate(results, start=1):
+                        username = record['username']
+                        enc_password = record['password']
+                        salt = record['salt']
                         try:
-                            password = security.decrypt(enc_password, master_password)
+                            decoded_salt = base64.urlsafe_b64encode(salt).decode()
+                            data_with_salt = decoded_salt + ":" + enc_password
+                            password = security.decrypt(data_with_salt, master_password)
                             print(f"{Fore.YELLOW}Compte {index}:{Style.RESET_ALL} Nom d'utilisateur: {username}, Mot de passe: {password}")
                         except Exception as e:
                             print(f"{Fore.RED}Erreur lors du déchiffrement: {e}{Style.RESET_ALL}")
@@ -89,8 +100,10 @@ def main():
                 passwords = db.list_all_passwords()
                 if passwords:
                     print(f"\n{Fore.YELLOW}Liste de tous les mots de passe:{Style.RESET_ALL}")
-                    for site, username, enc_password in passwords:
-                        password = security.decrypt(enc_password, master_password)
+                    for site, username, enc_password, salt in passwords:
+                        decoded_salt = base64.urlsafe_b64encode(salt).decode()
+                        data_with_salt = decoded_salt + ":" + enc_password
+                        password = security.decrypt(data_with_salt, master_password)
                         print(f"Site: {site} -- Nom d'utilisateur: {username} -- Mot de passe: {password}")
                 else:
                     print(f"{Fore.RED}Aucun mot de passe enregistré.{Style.RESET_ALL}")

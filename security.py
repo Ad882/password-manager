@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
 import bcrypt
+import os 
 
 class Security:
     def __init__(self, master_password_file="master_password.txt", db=None):
@@ -24,7 +25,8 @@ class Security:
             print(f"Error initializing master password: {e}")
 
     def create_cipher(self, master_password: str) -> None:
-        salt = b"static_salt_for_key_derivation"  
+        salt = os.urandom(16)
+        self.salt = salt
         key = self._derive_key(master_password, salt)
         self.cipher = Fernet(key)
 
@@ -41,11 +43,17 @@ class Security:
     def encrypt(self, data: str, master_password: str) -> str:
         self.create_cipher(master_password)
         combined_data = (master_password + data).encode()
-        return self.cipher.encrypt(combined_data).decode()
+        encrypted_data = self.cipher.encrypt(combined_data).decode()
+        return base64.urlsafe_b64encode(self.salt).decode() + ":" + encrypted_data
 
     def decrypt(self, enc_data: str, master_password: str) -> str:
-        self.create_cipher(master_password) 
-        decrypted = self.cipher.decrypt(enc_data.encode()).decode()
+        salt_base64, encrypted_data = enc_data.split(":", 1)
+        salt = base64.urlsafe_b64decode(salt_base64)
+
+        key = self._derive_key(master_password, salt)
+        self.cipher = Fernet(key)
+
+        decrypted = self.cipher.decrypt(encrypted_data.encode()).decode()
         return decrypted.replace(master_password, "")
 
     def verify_master_password(self, master_password: str) -> bool:
