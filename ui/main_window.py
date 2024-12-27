@@ -9,7 +9,7 @@ class PasswordManagerApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Password Manager")
-        self.master.geometry("400x400")
+        self.master.geometry("400x300")
         self.security = Security(master_password_file="master_password.txt", db=Database("database/passwords.db"))
 
         # Master Password Section
@@ -20,94 +20,108 @@ class PasswordManagerApp:
         self.btn_login = tk.Button(master, text="Login", command=self.verify_master_password)
         self.btn_login.pack(pady=10)
 
-        # Password Manager Section (Hidden initially)
-        self.frame_manager = tk.Frame(master)
-        self.lbl_site = tk.Label(self.frame_manager, text="Site:")
+        # Main Menu Section
+        self.frame_menu = tk.Frame(master)
+        self.btn_add = tk.Button(self.frame_menu, text="Add Password", command=lambda: self.show_action_ui("add"))
+        self.btn_add.grid(row=0, column=0, padx=10, pady=10)
+        self.btn_generate = tk.Button(self.frame_menu, text="Generate Password", command=lambda: self.show_action_ui("generate"))
+        self.btn_generate.grid(row=0, column=1, padx=10, pady=10)
+        self.btn_delete = tk.Button(self.frame_menu, text="Delete Password", command=lambda: self.show_action_ui("delete"))
+        self.btn_delete.grid(row=1, column=0, padx=10, pady=10)
+        self.btn_show = tk.Button(self.frame_menu, text="Show Password", command=lambda: self.show_action_ui("show"))
+        self.btn_show.grid(row=1, column=1, padx=10, pady=10)
+        self.btn_show_all = tk.Button(self.frame_menu, text="Show All", command=self.show_all)
+        self.btn_show_all.grid(row=2, columnspan=2, pady=10)
+
+        self.frame_action = tk.Frame(master)
+        self.lbl_site = tk.Label(self.frame_action, text="Site:")
         self.lbl_site.grid(row=0, column=0, pady=5)
-        self.entry_site = tk.Entry(self.frame_manager)
+        self.entry_site = tk.Entry(self.frame_action)
         self.entry_site.grid(row=0, column=1, pady=5)
 
-        self.lbl_password = tk.Label(self.frame_manager, text="Password:")
-        self.lbl_password.grid(row=1, column=0, pady=5)
-        self.entry_password = tk.Entry(self.frame_manager, show="*")
-        self.entry_password.grid(row=1, column=1, pady=5)
+        self.lbl_username = tk.Label(self.frame_action, text="Username:")
+        self.lbl_username.grid(row=1, column=0, pady=5)
+        self.entry_username = tk.Entry(self.frame_action)
+        self.entry_username.grid(row=1, column=1, pady=5)
 
-        self.lbl_username = tk.Label(self.frame_manager, text="Username:")
-        self.lbl_username.grid(row=2, column=0, pady=5)
-        self.entry_username = tk.Entry(self.frame_manager)
-        self.entry_username.grid(row=2, column=1, pady=5)
+        self.lbl_password = tk.Label(self.frame_action, text="Password:")
+        self.entry_password = tk.Entry(self.frame_action, show="*")
 
-        self.btn_save = tk.Button(self.frame_manager, text="Save Password", command=self.save_password)
-        self.btn_save.grid(row=3, columnspan=2, pady=10)
-
-        self.btn_save = tk.Button(self.frame_manager, text="Generate Password", command=self.generate_password)
-        self.btn_save.grid(row=4, columnspan=2, pady=10)
-
-        self.btn_show = tk.Button(self.frame_manager, text="Show Password", command=self.show_password)
-        self.btn_show.grid(row=5, columnspan=2, pady=10)
-
-        self.btn_show_all = tk.Button(self.frame_manager, text="Show All", command=self.show_all)
-        self.btn_show_all.grid(row=6, columnspan=2, pady=10)
-
-        self.btn_show_all = tk.Button(self.frame_manager, text="Delete Password", command=self.delete_password)
-        self.btn_show_all.grid(row=7, columnspan=2, pady=10)
+        self.btn_confirm_action = tk.Button(self.frame_action, text="Confirm", command=self.handle_action)
+        self.btn_confirm_action.grid(row=3, columnspan=2, pady=10)
+        self.btn_exit_action = tk.Button(self.frame_action, text="Exit", command=self.show_main_menu)
+        self.btn_exit_action.grid(row=4, columnspan=2, pady=10)
 
     def verify_master_password(self):
         master_password = self.entry_master.get()
         if self.security.verify_master_password(master_password):
             messagebox.showinfo("Success", "Master password verified!")
-            self.show_manager_ui()
+            self.show_main_menu()
         else:
             messagebox.showerror("Error", "Incorrect master password.")
 
-    def show_manager_ui(self):
+    def show_main_menu(self):
+        self.frame_action.pack_forget()
         self.lbl_master.pack_forget()
         self.entry_master.pack_forget()
         self.btn_login.pack_forget()
-        self.frame_manager.pack(pady=20)
+        self.frame_menu.pack(pady=20)
+        self.current_action = None
 
-    def save_password(self):
-        site = self.entry_site.get()
-        username = self.entry_username.get()
-        password = self.entry_password.get()
-        master_password = self.entry_master.get()
-        enc_data = self.security.encrypt(password, master_password)
-        salt_base64, encrypted_password = enc_data.split(":", 1)
-        salt = base64.urlsafe_b64decode(salt_base64)
+    def show_action_ui(self, action):
+        self.frame_menu.pack_forget()
+        self.frame_action.pack(pady=20)
+        self.current_action = action
 
-        self.security.db.add_password(site, username, encrypted_password, salt)
-        messagebox.showinfo("Success", f"Password for {site} saved!")
-        self.entry_site.delete(0, tk.END)
-        self.entry_username.delete(0, tk.END)
-        self.entry_password.delete(0, tk.END)
-
-    def show_password(self):
-        site = self.entry_site.get()
-        master_password = self.entry_master.get()
-        results = self.security.db.get_password(site)
-        if results:
-            for index, record in enumerate(results, start=1):
-                username = record['username']
-                enc_password = record['password']
-                salt = record['salt']
-                decoded_salt = base64.urlsafe_b64encode(salt).decode()
-                data_with_salt = decoded_salt + ":" + enc_password
-                password = self.security.decrypt(data_with_salt, master_password)
-                messagebox.showinfo("Password", f"Site: {site}\nUsername: {username}\nPassword: {password}")
+        if action == "add":
+            self.lbl_password.grid(row=2, column=0, pady=5)
+            self.entry_password.grid(row=2, column=1, pady=5)
         else:
-            messagebox.showerror("Error", "No password found for this site.")
+            self.lbl_password.grid_forget()
+            self.entry_password.grid_forget()
 
-    def generate_password(self):
+    def handle_action(self):
         site = self.entry_site.get()
         username = self.entry_username.get()
-        password = generate_password()
         master_password = self.entry_master.get()
-        enc_data = self.security.encrypt(password, master_password)
-        salt_base64, encrypted_password = enc_data.split(":", 1)
-        salt = base64.urlsafe_b64decode(salt_base64)
 
-        self.security.db.add_password(site, username, encrypted_password, salt)
-        messagebox.showinfo("Success", f"Password for {site} saved!")
+        if self.current_action == "add":
+            password = self.entry_password.get()
+            if not password:
+                messagebox.showerror("Error", "Please enter a password.")
+                return
+
+            enc_data = self.security.encrypt(password, master_password)
+            salt_base64, encrypted_password = enc_data.split(":", 1)
+            salt = base64.urlsafe_b64decode(salt_base64)
+            self.security.db.add_password(site, username, encrypted_password, salt)
+            messagebox.showinfo("Success", f"Password for {site} added!")
+
+        elif self.current_action == "generate":
+            password = generate_password()
+            enc_data = self.security.encrypt(password, master_password)
+            salt_base64, encrypted_password = enc_data.split(":", 1)
+            salt = base64.urlsafe_b64decode(salt_base64)
+            self.security.db.add_password(site, username, encrypted_password, salt)
+            messagebox.showinfo("Success", f"Password for {site} generated and saved!")
+
+        elif self.current_action == "delete":
+            self.security.db.delete_password(site, username)
+            messagebox.showinfo("Success", f"Password for {site} deleted!")
+
+        elif self.current_action == "show":
+            results = self.security.db.get_password(site)
+            if results:
+                for record in results:
+                    enc_password = record['password']
+                    salt = record['salt']
+                    decoded_salt = base64.urlsafe_b64encode(salt).decode()
+                    data_with_salt = decoded_salt + ":" + enc_password
+                    password = self.security.decrypt(data_with_salt, master_password)
+                    messagebox.showinfo("Password", f"Site: {site}\nUsername: {username}\nPassword: {password}")
+            else:
+                messagebox.showerror("Error", "No password found for this site.")
+
         self.entry_site.delete(0, tk.END)
         self.entry_username.delete(0, tk.END)
         self.entry_password.delete(0, tk.END)
@@ -125,8 +139,7 @@ class PasswordManagerApp:
                     all_passwords.append(f"Site: {site}\nUsername: {username}\nPassword: {password}\n")
                 except Exception as e:
                     all_passwords.append(f"Site: {site}\nError decrypting password: {e}\n")
-            
-            # Display passwords in a scrolled text widget
+
             all_passwords_text = "\n".join(all_passwords)
             popup = tk.Toplevel(self.master)
             popup.title("All Passwords")
@@ -137,17 +150,6 @@ class PasswordManagerApp:
             text_area.pack(pady=10)
         else:
             messagebox.showinfo("Info", "No passwords stored.")
-
-
-    def delete_password(self):
-        site = self.entry_site.get()
-        username = self.entry_username.get()
-        self.security.db.delete_password(site, username)
-
-        messagebox.showinfo("Success", f"Password deleted!")
-        self.entry_site.delete(0, tk.END)
-        self.entry_username.delete(0, tk.END)
-        self.entry_password.delete(0, tk.END)
 
 if __name__ == "__main__":
     root = tk.Tk()
