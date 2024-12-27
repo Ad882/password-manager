@@ -48,9 +48,9 @@ class Database:
         return None
     
 
-    def delete_password(self, site):
-        query = "DELETE FROM passwords WHERE site = ?"
-        self.conn.execute(query, (site,))
+    def delete_password(self, site, username):
+        query = "DELETE FROM passwords WHERE site = ? AND username = ?"
+        self.conn.execute(query, (site, username))
         self.conn.commit()
 
     def list_all_passwords(self):
