@@ -92,7 +92,8 @@ def main():
 
             elif choice == "4":
                 site = input("Entrez le site ou l'application: ")
-                db.delete_password(site)
+                username = input("Entrez le nom d'utilisateur: ")
+                db.delete_password(site, username)
                 print(f"{Fore.RED}Mot de passe supprimé!{Style.RESET_ALL}")
 
 
