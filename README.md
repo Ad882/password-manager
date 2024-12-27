@@ -16,7 +16,7 @@ This is a basic **password manager** application built with Python and SQLite. I
 ```plaintext
 password_manager/
 ├── database/               # Contains the SQLite database and related 
-│   ├── db_handler.py       # Handles database operations
+│   ├── database.py         # Handles database operations
 │   └── passwords.db        # Local SQLite database file
 │
 ├── tests/                  # Contains the unit tests 
@@ -24,6 +24,10 @@ password_manager/
 │   ├── test_security.py    # Tests the security related functions
 │   └── test_utils.py       # Tests the auxiliary functions
 │
+├── ui/                     # Contains the UI  
+│   └── main_window.py      # UI code
+│ 
+├── main_gui.py             # Entry point for the application with UI
 ├── main.py                 # Entry point for the application
 ├── master_password.txt     # Contains the hashed master password
 ├── README.md
