@@ -21,7 +21,7 @@ password_manager/
 │
 ├── resources/               # Contains images and icons to prettify the application
 │   ├── icons/               # Contains the icons
-         └── ...             # icons
+│   │     └── ...            # icons
 │   └── ...                  # images
 │
 ├── tests/                  # Contains the unit tests 
