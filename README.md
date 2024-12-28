@@ -7,7 +7,8 @@ This is a basic **password manager** application built with Python and SQLite. I
 ## 🌟 **Features**  
 - Encrypted storage for sensitive information. 
 - Add, view, update, or delete account passwords easily.  
-- Simple and intuitive command-line interface (CLI)  or application.
+- Simple and intuitive command-line interface (CLI)  or application.   
+  ⚠️ The CLI is in French 🇫🇷
 
 <br>
 
