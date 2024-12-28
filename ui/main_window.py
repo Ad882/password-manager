@@ -106,6 +106,8 @@ class PasswordManagerApp:
             self.show_main_menu()
         else:
             messagebox.showerror("Error", "Incorrect master password.")
+            self.entry_master.delete(0, tk.END)
+            self.entry_master.focus_set()
 
     def show_main_menu(self):
         self.frame_action.pack_forget()
