@@ -19,6 +19,11 @@ password_manager/
 │   ├── database.py         # Handles database operations
 │   └── passwords.db        # Local SQLite database file
 │
+├── resources/               # Contains images and icons to prettify the application
+│   ├── icons/               # Contains the icons
+         └── ...             # icons
+│   └── ...                  # images
+│
 ├── tests/                  # Contains the unit tests 
 │   ├── test_database.py    # Tests the database related functions
 │   ├── test_security.py    # Tests the security related functions
