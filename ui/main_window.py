@@ -163,7 +163,10 @@ class PasswordManagerApp:
                     decoded_salt = base64.urlsafe_b64encode(salt).decode()
                     data_with_salt = decoded_salt + ":" + enc_password
                     password = self.security.decrypt(data_with_salt, master_password)
-                    messagebox.showinfo("Password", f"Site: {site}\nUsername: {username}\nPassword: {password}")
+                    self.master.clipboard_clear()
+                    self.master.clipboard_append(password)
+                    self.master.update()
+                    messagebox.showinfo("Password", "Password copied to clipboard!")
             else:
                 messagebox.showerror("Error", "No password found for this site.")
 
