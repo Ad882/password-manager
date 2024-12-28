@@ -58,10 +58,15 @@ password_manager/
    ```
 
 3. **Run the Application**  
-   Launch the main script to start the password manager:  
-   ```bash
-   python main.py
-   ```
+   Launch the main script to start the password manager:   
+   a) To start the command-line application:
+     ```bash
+     python main.py
+     ```
+   b) To start the "user friendly" application:
+     ```bash
+     python main_gui.py
+     ```
 
 ---
 
