@@ -36,43 +36,72 @@ class PasswordManagerApp:
         self.btn_login = tk.Button(master, text="Login", command=self.verify_master_password)
         self.btn_login.pack(pady=10)
         self.master.bind("<Return>", lambda event: self.verify_master_password())
+        self.master.bind("<Escape>", lambda event: self.master.destroy())
 
         # Main Menu Section
-        self.frame_menu = tk.Frame(master)
-        self.btn_add = tk.Button(self.frame_menu, text="Add Password", image=self.icon_add, compound="left", command=lambda: self.show_action_ui("add"))
-        self.btn_add.grid(row=0, column=0, padx=10, pady=10)
-        self.btn_generate = tk.Button(self.frame_menu, text="Generate Password", image=self.icon_generate, compound="left", command=lambda: self.show_action_ui("generate"))
-        self.btn_generate.grid(row=0, column=1, padx=10, pady=10)
-        self.btn_delete = tk.Button(self.frame_menu, text="Delete Password", image=self.icon_delete, compound="left", command=lambda: self.show_action_ui("delete"))
-        self.btn_delete.grid(row=1, column=0, padx=10, pady=10)
-        self.btn_show = tk.Button(self.frame_menu, text="Show Password", image=self.icon_show, compound="left", command=lambda: self.show_action_ui("show"))
-        self.btn_show.grid(row=1, column=1, padx=10, pady=10)
-        self.btn_show_all = tk.Button(self.frame_menu, text="Show All", image=self.icon_show_all, compound="left", command=self.show_all)
-        self.btn_show_all.grid(row=2, columnspan=2, pady=10)
+        self.btn_add = tk.Button(master, text="Add Password", image=self.icon_add, compound="left", 
+                                 command=lambda: self.show_action_ui("add"), bd=0, bg="white", activebackground="white")
+        self.btn_add.place(x=80, y=100)
+
+        self.btn_generate = tk.Button(master, text="Generate Password", image=self.icon_generate, compound="left", 
+                                      command=lambda: self.show_action_ui("generate"), bd=0, bg="white", activebackground="white")
+        self.btn_generate.place(x=350, y=100)
+
+        self.btn_delete = tk.Button(master, text="Delete Password", image=self.icon_delete, compound="left", 
+                                    command=lambda: self.show_action_ui("delete"), bd=0, bg="white", activebackground="white")
+        self.btn_delete.place(x=75, y=200)
+
+        self.btn_show = tk.Button(master, text="Show Password", image=self.icon_show, compound="left", 
+                                  command=lambda: self.show_action_ui("show"), bd=0, bg="white", activebackground="white")
+        self.btn_show.place(x=360, y=200)
+
+        self.btn_show_all = tk.Button(master, text="Show All", image=self.icon_show_all, compound="left", 
+                                      command=self.show_all, bd=0, bg="white", activebackground="white")
+        self.btn_show_all.place(x=245, y=340)
+
+
+        self.hide_menu_buttons()
 
         self.frame_action = tk.Frame(master)
         self.lbl_site = tk.Label(self.frame_action, text="Site:")
-        self.lbl_site.grid(row=0, column=0, pady=5)
+        self.lbl_site.grid(row=0, column=0, pady=10)
         self.entry_site = tk.Entry(self.frame_action)
-        self.entry_site.grid(row=0, column=1, pady=5)
+        self.entry_site.grid(row=0, column=3, pady=10)
 
         self.lbl_username = tk.Label(self.frame_action, text="Username:")
-        self.lbl_username.grid(row=1, column=0, pady=5)
+        self.lbl_username.grid(row=1, column=0, pady=10)
         self.entry_username = tk.Entry(self.frame_action)
-        self.entry_username.grid(row=1, column=1, pady=5)
+        self.entry_username.grid(row=1, column=3, pady=10)
 
         self.lbl_password = tk.Label(self.frame_action, text="Password:")
         self.entry_password = tk.Entry(self.frame_action, show="*")
 
         self.btn_confirm_action = tk.Button(self.frame_action, text="Confirm", command=self.handle_action)
-        self.btn_confirm_action.grid(row=3, columnspan=2, pady=10)
+        self.btn_confirm_action.grid(row=5, columnspan=4, pady=5)
         self.btn_exit_action = tk.Button(self.frame_action, text="Exit", command=self.show_main_menu)
-        self.btn_exit_action.grid(row=4, columnspan=2, pady=10)
+        self.btn_exit_action.grid(row=6, columnspan=4, pady=5)
+
+
+    def hide_menu_buttons(self):
+        self.btn_add.place_forget()
+        self.btn_generate.place_forget()
+        self.btn_delete.place_forget()
+        self.btn_show.place_forget()
+        self.btn_show_all.place_forget()
+
+    def show_menu_buttons(self):
+        self.btn_add.place(x=80, y=100)
+        self.btn_generate.place(x=350, y=100)
+        self.btn_delete.place(x=75, y=200)
+        self.btn_show.place(x=360, y=200)
+
+        self.btn_show_all.place(x=245, y=300)
 
     def verify_master_password(self):
         master_password = self.entry_master.get()
         if self.security.verify_master_password(master_password):
             messagebox.showinfo("Success", "Master password verified!")
+            self.show_menu_buttons()
             self.show_main_menu()
         else:
             messagebox.showerror("Error", "Incorrect master password.")
@@ -81,17 +110,17 @@ class PasswordManagerApp:
         self.frame_action.pack_forget()
         self.entry_master.pack_forget()
         self.btn_login.pack_forget()
-        self.frame_menu.pack(pady=20)
         self.current_action = None
+        self.show_menu_buttons()
 
     def show_action_ui(self, action):
-        self.frame_menu.pack_forget()
-        self.frame_action.pack(pady=20)
+        self.hide_menu_buttons()
+        self.frame_action.pack(pady=100)
         self.current_action = action
 
         if action == "add":
-            self.lbl_password.grid(row=2, column=0, pady=5)
-            self.entry_password.grid(row=2, column=1, pady=5)
+            self.lbl_password.grid(row=2, column=0, pady=10)
+            self.entry_password.grid(row=2, column=3, pady=10)
         else:
             self.lbl_password.grid_forget()
             self.entry_password.grid_forget()
