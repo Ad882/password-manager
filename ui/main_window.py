@@ -6,6 +6,7 @@ import base64
 from utils import generate_password
 from PIL import Image, ImageTk
 from tkinter.font import Font
+import webbrowser
 
 class PasswordManagerApp:
     def __init__(self, master):
@@ -184,20 +185,40 @@ class PasswordManagerApp:
                 data_with_salt = decoded_salt + ":" + enc_password
                 try:
                     password = self.security.decrypt(data_with_salt, master_password)
-                    all_passwords.append(f"Site: {site}\nUsername: {username}\nPassword: {password}\n")
+                    all_passwords.append([site, username, password])
                 except Exception as e:
-                    all_passwords.append(f"Site: {site}\nError decrypting password: {e}\n")
+                    print(f"Error decrypting password: {e}\n")
 
-            all_passwords_text = "\n".join(all_passwords)
             popup = tk.Toplevel(self.master)
             popup.title("All Passwords")
             popup.geometry("500x400")
-            text_area = scrolledtext.ScrolledText(popup, wrap=tk.WORD, width=60, height=20)
-            text_area.insert(tk.END, all_passwords_text)
-            text_area.config(state=tk.DISABLED)
-            text_area.pack(pady=10)
+            listbox = tk.Listbox(popup, width=60, height=20)
+            for sup in all_passwords:
+                site = sup[0]
+                username = sup[1]
+                password = sup[2]
+                listbox.insert(tk.END, f"Site: {site}")
+                listbox.insert(tk.END, f"Username: {username}")
+                listbox.insert(tk.END, f"Password: {password}")
+                listbox.insert(tk.END, f"")
+            listbox.pack(pady=10)
+
+            listbox.bind("<Double-1>", self.handle_double_click)
         else:
             messagebox.showinfo("Info", "No passwords stored.")
+
+    def handle_double_click(self, event):
+        listbox = event.widget
+        selected_index = listbox.curselection()
+        if selected_index:
+            selected_item = listbox.get(selected_index).split(": ")[1]
+            if (selected_item.endswith(".com") or selected_item.endswith(".fr")) and not ("@" in selected_item):
+                webbrowser.open(selected_item)
+            else:
+                self.master.clipboard_clear()
+                self.master.clipboard_append(selected_item)
+                self.master.update()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
