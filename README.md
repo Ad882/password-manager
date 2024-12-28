@@ -82,6 +82,7 @@ password_manager/
 - `SQLite` 🗄️  
 - `bcrypt` 🔒  
 - `unittest` 🧪
+- `pillow` 💤
 
 ---
 
