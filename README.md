@@ -2,17 +2,16 @@
  
 This is a basic **password manager** application built with Python and SQLite. It allows users to securely store, retrieve, and manage their passwords for different accounts in a centralized and encrypted database.
 
----
+<br>
 
-### 🌟 **Features**  
-- Securely stores credentials in a local SQLite database 🛡️.  
+## 🌟 **Features**  
+- Encrypted storage for sensitive information. 
 - Add, view, update, or delete account passwords easily.  
-- Simple and intuitive command-line interface (CLI).  
-- Encrypted storage for sensitive information 🔒.
+- Simple and intuitive command-line interface (CLI)  or application.
 
----
+<br>
 
-### 🗂️ **Project Structure**  
+## 🗂️ **Project Structure**  
 ```plaintext
 password_manager/
 ├── database/               # Contains the SQLite database and related 
@@ -41,9 +40,10 @@ password_manager/
 └── utils.py                # utility functions / generic tools
 ```
 
----
+<br>
+<br>
 
-### ⚡ **Quick Start**  
+## ⚡ **Quick Start**  
 
 1. **Clone the Repository**  
    ```bash
@@ -68,25 +68,9 @@ password_manager/
      python main_gui.py
      ```
 
----
+<br>
 
-### 🛠️ **How It Works**  
-
-- **Database Initialization**:  
-  At the first launch, the application automatically creates the SQLite database `passwords.db` with a table to store account details.  
-
-- **Add New Account**:  
-  Enter a service name, username, and password to save it securely in the database.  
-
-- **Retrieve Credentials**:  
-  Search for stored credentials by service name.  
-
-- **Update or Delete**:  
-  Modify existing credentials or delete unused entries.
-
----
-
-### 🔗 **Dependencies**  
+## 🔗 **Dependencies**  
 
 - `Python 3.8+` 🐍  
 - `SQLite` 🗄️  
@@ -94,15 +78,11 @@ password_manager/
 - `unittest` 🧪
 - `pillow` 💤
 
----
 
-### 🌐 **Language**  
-This application operates **entirely in French**!
+<br>
+<br>
 
-
----
-
-### 🧪 **Running Tests**
+## 🧪 **Running Tests**
 
 To ensure the integrity and functionality of the password manager, unit tests have been included for key components like encryption, database operations, and utility functions. To run the tests, use the following command to run all the unit tests in the `tests/` folder:
   ```bash
