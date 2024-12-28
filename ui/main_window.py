@@ -4,33 +4,50 @@ from database.database import Database
 from security import Security
 import base64
 from utils import generate_password
+from PIL import Image, ImageTk
+from tkinter.font import Font
 
 class PasswordManagerApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Password Manager")
-        self.master.geometry("400x300")
+        self.master.geometry("600x400")
+        self.master.resizable(False, False)
+
+        self.background_image = Image.open("resources/background.webp")
+        self.background_image = self.background_image.resize((600, 400), Image.Resampling.LANCZOS)
+        self.bg_photo = ImageTk.PhotoImage(self.background_image)
+        self.bg_label = tk.Label(master, image=self.bg_photo)
+        self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.icon_add = ImageTk.PhotoImage(Image.open("resources/icons/add.png").resize((40, 40), Image.Resampling.LANCZOS))
+        self.icon_generate = ImageTk.PhotoImage(Image.open("resources/icons/generate.png").resize((40, 40), Image.Resampling.LANCZOS))
+        self.icon_delete = ImageTk.PhotoImage(Image.open("resources/icons/delete.png").resize((40, 40), Image.Resampling.LANCZOS))
+        self.icon_show = ImageTk.PhotoImage(Image.open("resources/icons/show.png").resize((40, 40), Image.Resampling.LANCZOS))
+        self.icon_show_all = ImageTk.PhotoImage(Image.open("resources/icons/show_all.png").resize((40, 40), Image.Resampling.LANCZOS))
+
+
         self.security = Security(master_password_file="master_password.txt", db=Database("database/passwords.db"))
 
         # Master Password Section
-        self.lbl_master = tk.Label(master, text="Enter Master Password:")
-        self.lbl_master.pack(pady=10)
         self.entry_master = tk.Entry(master, show="*")
-        self.entry_master.pack(pady=5)
+        self.entry_master.pack(pady=38)
+        self.entry_master.focus_set()
         self.btn_login = tk.Button(master, text="Login", command=self.verify_master_password)
         self.btn_login.pack(pady=10)
+        self.master.bind("<Return>", lambda event: self.verify_master_password())
 
         # Main Menu Section
         self.frame_menu = tk.Frame(master)
-        self.btn_add = tk.Button(self.frame_menu, text="Add Password", command=lambda: self.show_action_ui("add"))
+        self.btn_add = tk.Button(self.frame_menu, text="Add Password", image=self.icon_add, compound="left", command=lambda: self.show_action_ui("add"))
         self.btn_add.grid(row=0, column=0, padx=10, pady=10)
-        self.btn_generate = tk.Button(self.frame_menu, text="Generate Password", command=lambda: self.show_action_ui("generate"))
+        self.btn_generate = tk.Button(self.frame_menu, text="Generate Password", image=self.icon_generate, compound="left", command=lambda: self.show_action_ui("generate"))
         self.btn_generate.grid(row=0, column=1, padx=10, pady=10)
-        self.btn_delete = tk.Button(self.frame_menu, text="Delete Password", command=lambda: self.show_action_ui("delete"))
+        self.btn_delete = tk.Button(self.frame_menu, text="Delete Password", image=self.icon_delete, compound="left", command=lambda: self.show_action_ui("delete"))
         self.btn_delete.grid(row=1, column=0, padx=10, pady=10)
-        self.btn_show = tk.Button(self.frame_menu, text="Show Password", command=lambda: self.show_action_ui("show"))
+        self.btn_show = tk.Button(self.frame_menu, text="Show Password", image=self.icon_show, compound="left", command=lambda: self.show_action_ui("show"))
         self.btn_show.grid(row=1, column=1, padx=10, pady=10)
-        self.btn_show_all = tk.Button(self.frame_menu, text="Show All", command=self.show_all)
+        self.btn_show_all = tk.Button(self.frame_menu, text="Show All", image=self.icon_show_all, compound="left", command=self.show_all)
         self.btn_show_all.grid(row=2, columnspan=2, pady=10)
 
         self.frame_action = tk.Frame(master)
@@ -62,7 +79,6 @@ class PasswordManagerApp:
 
     def show_main_menu(self):
         self.frame_action.pack_forget()
-        self.lbl_master.pack_forget()
         self.entry_master.pack_forget()
         self.btn_login.pack_forget()
         self.frame_menu.pack(pady=20)
