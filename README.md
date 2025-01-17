@@ -12,7 +12,7 @@ This is a basic **password manager** application built with Python and SQLite. I
 
 <br>
 
-## 🗂️ **Project Structure**  
+## 🗂️ **Project structure**  
 ```plaintext
 password_manager/
 ├── database/               # Contains the SQLite database and related 
@@ -44,21 +44,21 @@ password_manager/
 <br>
 <br>
 
-## ⚡ **Quick Start**  
+## ⚡ **Quick start**  
 
-1. **Clone the Repository**  
+1. **Clone the repository**  
    ```bash
    git clone https://github.com/Ad882/password-manager
    cd ./password-manager
    ```
 
-2. **Install Dependencies**  
+2. **Install dependencies**  
    Ensure you have Python 3.8+ installed. Install required libraries:  
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Run the Application**  
+3. **Run the application**  
    Launch the main script to start the password manager:   
    a) To start the command-line application:
      ```bash
@@ -83,7 +83,7 @@ password_manager/
 <br>
 <br>
 
-## 🧪 **Running Tests**
+## 🧪 **Running tests**
 
 To ensure the integrity and functionality of the password manager, unit tests have been included for key components like encryption, database operations, and utility functions. To run the tests, use the following command to run all the unit tests in the `tests/` folder:
   ```bash
