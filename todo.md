@@ -1,0 +1,3 @@
+- [ ] BitLocker / LUKS ?
+- [x] Desktop application
+- [ ] Browser extension 
